@@ -1,10 +1,15 @@
-import './App.css'
+import React from 'react';
+import AppRoutes from './routes/AppRoutes';
+import Header from './components/Header';
 
 function App() {
 
   return (
     <>
-      <h1 className="text-2xl text-white font-bold">REACT + VITE</h1>
+     <Header />
+     <div className='mt-16'>
+        <AppRoutes />
+     </div>
     </>
   )
 }
