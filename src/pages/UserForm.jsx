@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import * as Yup from "yup";
+import { createUser } from "../services/userService"; // Importa o serviço de criação de usuário
 
-const UserForm = () => {
+const UserForm = ({ onUserCreated }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,9 +24,7 @@ const UserForm = () => {
   });
 
   const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -36,16 +35,34 @@ const UserForm = () => {
     e.preventDefault();
 
     try {
+      // Valida os dados usando o esquema definido pelo Yup
       await validationSchema.validate(formData, { abortEarly: false });
-      alert("Dados válidos. Enviando...");
-      console.log("Dados do formulário:", formData);
-    } catch (validationErrors) {
-      const formattedErrors = {};
-      validationErrors.inner.forEach((error) => {
-        formattedErrors[error.path] = error.message;
-      });
 
-      setErrors(formattedErrors);
+      // Envia os dados para a API
+      const user = await createUser(formData);
+
+      alert("Usuário cadastrado com sucesso!");
+      console.log("Usuário cadastrado:", user);
+
+      // Passa o user_id para o componente pai (se necessário)
+      if (onUserCreated) {
+        onUserCreated(user.id);
+      }
+
+      // Reseta o formulário após o envio
+      setFormData({ name: "", email: "", document: "", dateOfBirth: "" });
+      setErrors({});
+    } catch (validationErrors) {
+      if (validationErrors.inner) {
+        const formattedErrors = {};
+        validationErrors.inner.forEach((error) => {
+          formattedErrors[error.path] = error.message;
+        });
+        setErrors(formattedErrors);
+      } else {
+        console.error("Erro ao cadastrar usuário:", validationErrors);
+        alert("Erro ao cadastrar usuário.");
+      }
     }
   };
 
@@ -55,7 +72,10 @@ const UserForm = () => {
         <h2 className="text-purple-700 text-3xl font-bold mb-6 text-center">
           Cadastro de Usuários
         </h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           {/* Nome */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -131,7 +151,9 @@ const UserForm = () => {
               }`}
             />
             {errors.dateOfBirth && (
-              <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.dateOfBirth}
+              </p>
             )}
           </div>
 
