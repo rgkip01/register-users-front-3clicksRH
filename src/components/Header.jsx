@@ -1,18 +1,13 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
 
 const Header = () => {
   return (
-    <header className="bg-purple-700 w-full text-white p-4 shadow-sm fixed top-0">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="fixed top-0 left-0 w-full bg-purple-700 text-white py-4 px-6 shadow-md z-10">
+      <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold">3ClicksRH</h1>
-        <nav>
-          <Link to="/users" className="mr-4">usuários</Link>
-          <Link to="/addresses" className="mr-4">endereços</Link>
-        </nav>
       </div>
     </header>
   );
-}
+};
 
 export default Header;
