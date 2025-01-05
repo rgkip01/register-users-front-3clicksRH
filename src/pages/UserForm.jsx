@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import * as Yup from "yup";
-import { createUser } from "../services/userService"; // Importa o serviço de criação de usuário
+import { createUser } from "../services/userService";
 
 const UserForm = ({ onUserCreated }) => {
   const [formData, setFormData] = useState({
@@ -35,29 +35,28 @@ const UserForm = ({ onUserCreated }) => {
     e.preventDefault();
 
     try {
-      // Valida os dados usando o esquema definido pelo Yup
       await validationSchema.validate(formData, { abortEarly: false });
 
-      // Envia os dados para a API
       const user = await createUser(formData);
 
       alert("Usuário cadastrado com sucesso!");
       console.log("Usuário cadastrado:", user);
 
-      // Passa o user_id para o componente pai (se necessário)
       if (onUserCreated) {
         onUserCreated(user.id);
       }
 
-      // Reseta o formulário após o envio
       setFormData({ name: "", email: "", document: "", dateOfBirth: "" });
       setErrors({});
     } catch (validationErrors) {
+
       if (validationErrors.inner) {
         const formattedErrors = {};
+
         validationErrors.inner.forEach((error) => {
           formattedErrors[error.path] = error.message;
         });
+
         setErrors(formattedErrors);
       } else {
         console.error("Erro ao cadastrar usuário:", validationErrors);

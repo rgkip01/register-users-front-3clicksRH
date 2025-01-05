@@ -8,7 +8,7 @@ export const createUser = async (userData) => {
         name: userData.name,
         email: userData.email,
         document: userData.document,
-        date_of_birth: userData.date_of_birth
+        date_of_birth: userData.dateOfBirth
       },
     },
   };
