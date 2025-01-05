@@ -20,18 +20,6 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/cadastro-endereco"
-              className={({ isActive }) =>
-                `block py-2 px-4 rounded ${
-                  isActive ? 'bg-purple-600' : 'hover:bg-purple-600'
-                }`
-              }
-            >
-              Cadastro de Endereço
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
               to="/listagem-usuarios"
               className={({ isActive }) =>
                 `block py-2 px-4 rounded ${

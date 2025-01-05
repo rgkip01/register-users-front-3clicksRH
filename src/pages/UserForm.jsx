@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import * as Yup from "yup";
-import { createUser } from "../services/userService";
+import { createUser } from "../services/UserService";
 
 const UserForm = ({ onUserCreated }) => {
   const [formData, setFormData] = useState({

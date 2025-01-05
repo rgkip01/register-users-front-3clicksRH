@@ -1,26 +1,31 @@
-import React, { useState } from "react";
-import * as Yup from "yup";
+import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import * as Yup from 'yup';
+import { createAddress } from '../services/AddressService';
 
 const AddressForm = () => {
   const [formData, setFormData] = useState({
-    street: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    country: "",
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: '',
+    complement: '',
   });
 
   const [errors, setErrors] = useState({});
-
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('user_id'); // Obtém o user_id da query string
+  
   // Validações com Yup
   const validationSchema = Yup.object().shape({
-    street: Yup.string().required("A rua é obrigatória."),
-    city: Yup.string().required("A cidade é obrigatória."),
-    state: Yup.string().required("O estado é obrigatório."),
+    street: Yup.string().required('A rua é obrigatória.'),
+    city: Yup.string().required('A cidade é obrigatória.'),
+    state: Yup.string().required('O estado é obrigatório.'),
     zipCode: Yup.string()
-      .matches(/^\d{5}-?\d{3}$/, "O CEP deve estar no formato 00000-000.")
-      .required("O CEP é obrigatório."),
-    country: Yup.string().required("O país é obrigatório."),
+      .matches(/^\d{5}-?\d{3}$/, 'O CEP deve estar no formato 00000-000.')
+      .required('O CEP é obrigatório.'),
+    country: Yup.string().required('O país é obrigatório.'),
   });
 
   const handleChange = (e) => {
@@ -33,28 +38,41 @@ const AddressForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       await validationSchema.validate(formData, { abortEarly: false });
-      alert("Endereço válido. Enviando...");
-      console.log("Dados do formulário de endereço:", formData);
+  
+      if (!userId) {
+        alert('Usuário não identificado. Não é possível cadastrar o endereço.');
+        return;
+      }
+  
+      await createAddress(userId, formData); // Chamando o serviço com userId e formData
+      alert('Endereço cadastrado com sucesso!');
     } catch (validationErrors) {
-      const formattedErrors = {};
-      validationErrors.inner.forEach((error) => {
-        formattedErrors[error.path] = error.message;
-      });
-
-      setErrors(formattedErrors);
+      if (validationErrors.inner) {
+        const formattedErrors = {};
+        validationErrors.inner.forEach((error) => {
+          formattedErrors[error.path] = error.message;
+        });
+        setErrors(formattedErrors);
+      } else {
+        console.error('Erro ao cadastrar endereço:', validationErrors);
+        alert('Erro ao cadastrar endereço. Tente novamente.');
+      }
     }
   };
-
+  
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl">
         <h2 className="text-purple-700 text-3xl font-bold mb-6 text-center">
           Cadastro de Endereço
         </h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           {/* Rua */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -67,7 +85,7 @@ const AddressForm = () => {
               onChange={handleChange}
               placeholder="Digite a rua"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
-                errors.street ? "border-red-500" : "border-gray-300"
+                errors.street ? 'border-red-500' : 'border-gray-300'
               }`}
             />
             {errors.street && (
@@ -87,7 +105,7 @@ const AddressForm = () => {
               onChange={handleChange}
               placeholder="Digite a cidade"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
-                errors.city ? "border-red-500" : "border-gray-300"
+                errors.city ? 'border-red-500' : 'border-gray-300'
               }`}
             />
             {errors.city && (
@@ -107,7 +125,7 @@ const AddressForm = () => {
               onChange={handleChange}
               placeholder="Digite o estado"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
-                errors.state ? "border-red-500" : "border-gray-300"
+                errors.state ? 'border-red-500' : 'border-gray-300'
               }`}
             />
             {errors.state && (
@@ -127,7 +145,7 @@ const AddressForm = () => {
               onChange={handleChange}
               placeholder="Digite o CEP"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
-                errors.zipCode ? "border-red-500" : "border-gray-300"
+                errors.zipCode ? 'border-red-500' : 'border-gray-300'
               }`}
             />
             {errors.zipCode && (
@@ -147,12 +165,27 @@ const AddressForm = () => {
               onChange={handleChange}
               placeholder="Digite o país"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
-                errors.country ? "border-red-500" : "border-gray-300"
+                errors.country ? 'border-red-500' : 'border-gray-300'
               }`}
             />
             {errors.country && (
               <p className="text-red-500 text-sm mt-1">{errors.country}</p>
             )}
+          </div>
+
+          {/* Complemento */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Complemento
+            </label>
+            <input
+              type="text"
+              name="complement"
+              value={formData.complement}
+              onChange={handleChange}
+              placeholder="Digite o complemento"
+              className="w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 border-gray-300"
+            />
           </div>
 
           {/* Botão de Enviar */}
@@ -161,7 +194,7 @@ const AddressForm = () => {
               type="submit"
               className="bg-purple-700 text-white px-6 py-2 rounded-md shadow-md hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
             >
-              Cadastrar
+              Cadastrar Endereço
             </button>
           </div>
         </form>
