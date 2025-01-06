@@ -24,6 +24,10 @@ const UserList = () => {
     navigate(`/cadastro-endereco?user_id=${userId}`);
   };
 
+  const handleRowClick = (id) => {
+    navigate(`/usuarios/${id}`);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen p-8 flex justify-center">
       <div className="w-full max-w-[80%]">
@@ -39,21 +43,32 @@ const UserList = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-gray-100">
-                  <td className="px-6 py-4">{user.attributes.name}</td>
-                  <td className="px-6 py-4">{user.attributes.email}</td>
-                  <td className="px-6 py-4">{user.attributes.document}</td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleAddAddress(user.id)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 focus:outline-none"
-                    >
-                      Adicionar Endereço
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {users.length === 0 ? (
+                   <tr>
+                   <td colSpan="4" className="text-center py-6 text-gray-500">
+                     Nenhum usuário encontrado.
+                   </td>
+                 </tr> 
+              ): (
+                users.map((user) => (
+                  <tr key={user.id} onClick={() => handleRowClick(user.id)} className="border-b cursor-pointer hover:bg-gray-100">
+                    <td className="px-6 py-4">{user.attributes.name}</td>
+                    <td className="px-6 py-4">{user.attributes.email}</td>
+                    <td className="px-6 py-4">{user.attributes.document}</td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddAddress(user.id)
+                        }} 
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 focus:outline-none"
+                      >
+                        Adicionar Endereço
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

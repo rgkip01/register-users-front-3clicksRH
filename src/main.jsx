@@ -5,6 +5,7 @@ import App from './App';
 import UserForm from './pages/UserForm';
 import AddressForm from './pages/AddressForm';
 import UserList from './pages/UserList';
+import UserShow from './pages/UserShow';
 import './index.css';
 
 // Definindo minhas rotas usando createBrowserRouter
@@ -15,7 +16,8 @@ const router = createBrowserRouter([
     children: [
       { path: 'cadastro-usuario', element: <UserForm /> },
       { path: 'cadastro-endereco', element: <AddressForm /> },
-      { path: 'listagem-usuarios', element: <UserList /> },
+      { path: 'usuarios', element: <UserList /> },
+      { path: 'usuarios/:id', element: <UserShow /> },
     ],
   },
 ]);

@@ -20,7 +20,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/listagem-usuarios"
+              to="/usuarios"
               className={({ isActive }) =>
                 `block py-2 px-4 rounded ${
                   isActive ? 'bg-purple-600' : 'hover:bg-purple-600'
