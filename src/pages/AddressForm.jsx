@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { createAddress } from '../services/AddressService';
+import BackButton from '../components/BackButton';
 
 const AddressForm = () => {
   const [formData, setFormData] = useState({
@@ -191,7 +192,9 @@ const AddressForm = () => {
           </div>
 
           {/* Botão de Enviar */}
-          <div className="md:col-span-2 flex justify-center">
+          <div className="md:col-span-2 flex justify-center gap-4">
+            <BackButton />
+
             <button
               type="submit"
               className="bg-purple-700 text-white px-6 py-2 rounded-md shadow-md hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-600"

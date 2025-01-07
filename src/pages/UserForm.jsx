@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import * as Yup from "yup";
+import { useNavigate } from 'react-router-dom';
 import { createUser } from "../services/UserService";
+import BackButton from '../components/BackButton';
 
 const UserForm = ({ onUserCreated }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -41,7 +44,7 @@ const UserForm = ({ onUserCreated }) => {
 
       alert("Usuário cadastrado com sucesso!");
       console.log("Usuário cadastrado:", user);
-
+      navigate('/usuarios');
       if (onUserCreated) {
         onUserCreated(user.id);
       }
@@ -157,7 +160,9 @@ const UserForm = ({ onUserCreated }) => {
           </div>
 
           {/* Botão de Enviar */}
-          <div className="md:col-span-2 flex justify-center">
+          <div className="md:col-span-2 flex justify-center gap-4">
+            <BackButton />
+
             <button
               type="submit"
               className="bg-purple-700 text-white px-6 py-2 rounded-md shadow-md hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
