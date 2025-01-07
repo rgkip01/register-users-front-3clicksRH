@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getUsers, searchUsers, deleteUser } from '../services/UserService';
-import SearchBar from '../components/SearchBar';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import  {formatDocument } from '../helpers/formatDocument';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getUsers, searchUsers, deleteUser } from "../services/UserService";
+import SearchBar from "../components/SearchBar";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { formatDocument } from "../helpers/formatDocument";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -15,8 +15,10 @@ const UserList = () => {
         const fetchedUsers = await getUsers();
         setUsers(fetchedUsers);
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-        alert('Erro ao carregar a listagem de usuários. Tente novamente mais tarde.');
+        console.error("Erro ao buscar usuários:", error);
+        alert(
+          "Erro ao carregar a listagem de usuários. Tente novamente mais tarde."
+        );
       }
     };
 
@@ -28,7 +30,7 @@ const UserList = () => {
       const data = await searchUsers(query);
       setUsers(data);
     } catch (error) {
-      alert('Ocorreu um erro ao realizar a busca. Tente novamente.');
+      alert("Ocorreu um erro ao realizar a busca. Tente novamente.");
     }
   };
 
@@ -37,19 +39,18 @@ const UserList = () => {
   };
 
   const handleEditUser = (user) => {
-    localStorage.setItem('editUserData', JSON.stringify(user.attributes));
+    localStorage.setItem("editUserData", JSON.stringify(user.attributes));
     navigate(`/editar-usuario?id=${user.id}`);
   };
-  
 
   const handleDeleteUser = async (userId) => {
-    if (window.confirm('Tem certeza que deseja excluir este usuário?')) {
+    if (window.confirm("Tem certeza que deseja excluir este usuário?")) {
       try {
         await deleteUser(userId);
         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
       } catch (error) {
-        console.error('Erro ao excluir usuário:', error);
-        alert('Erro ao excluir o usuário. Tente novamente.');
+        console.error("Erro ao excluir usuário:", error);
+        alert("Erro ao excluir o usuário. Tente novamente.");
       }
     }
   };
@@ -62,9 +63,14 @@ const UserList = () => {
     <div className="bg-gray-100 min-h-screen p-8 flex justify-center">
       <div className="w-full max-w-[80%]">
         <div className="flex items-center justify-between mt-14 mb-6">
-          <h2 className="text-purple-700 text-3xl font-bold">Listagem de Usuários</h2>
+          <h2 className="text-purple-700 text-3xl font-bold">
+            Listagem de Usuários
+          </h2>
           <div className="w-1/3">
-            <SearchBar onSearch={handleSearch} suggestions={users.map((user) => user.attributes.name)} />
+            <SearchBar
+              onSearch={handleSearch}
+              suggestions={users.map((user) => user.attributes.name)}
+            />
           </div>
         </div>
 
@@ -76,6 +82,7 @@ const UserList = () => {
                 <th className="px-6 py-3 min-w-[200px]">Nome</th>
                 <th className="px-6 py-3 min-w-[250px]">Email</th>
                 <th className="px-6 py-3 min-w-[150px]">CPF</th>
+                <th className="px-6 py-3 min-w-[180px]">Data de Nasc.</th>
                 <th className="px-6 py-3 min-w-[250px]">Ações</th>
               </tr>
             </thead>
@@ -95,7 +102,14 @@ const UserList = () => {
                   >
                     <td className="px-6 py-4">{user.attributes.name}</td>
                     <td className="px-6 py-4">{user.attributes.email}</td>
-                    <td className="px-6 py-4">{formatDocument(user.attributes.document)}</td>
+                    <td className="px-6 py-4">
+                      {formatDocument(user.attributes.document)}
+                    </td>
+                    <td className="px-6 py-4">
+                      {new Date(
+                        user.attributes.date_of_birth
+                      ).toLocaleDateString("pt-BR")}
+                    </td>
                     <td className="px-6 py-4 flex gap-2">
                       <button
                         onClick={(e) => {
