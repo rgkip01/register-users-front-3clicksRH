@@ -4,6 +4,7 @@ import { getUserById, updateUser } from '../services/UserService';
 import { updateAddress, deleteAddress } from '../services/AddressService';
 import BackButton from '../components/BackButton';
 import { FaTrash, FaEdit } from 'react-icons/fa'; // Biblioteca de ícones
+import  {formatDocument } from '../helpers/formatDocument';
 
 const Usershow = () => {
   const { id } = useParams();
@@ -117,7 +118,7 @@ const Usershow = () => {
             <input
               type="text"
               name="document"
-              value={userData.document}
+              value={formatDocument(userData.document)}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 border-gray-300"
             />

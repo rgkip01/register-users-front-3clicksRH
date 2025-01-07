@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getUsers, searchUsers, deleteUser } from '../services/UserService';
 import SearchBar from '../components/SearchBar';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import  {formatDocument } from '../helpers/formatDocument';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -94,7 +95,7 @@ const UserList = () => {
                   >
                     <td className="px-6 py-4">{user.attributes.name}</td>
                     <td className="px-6 py-4">{user.attributes.email}</td>
-                    <td className="px-6 py-4">{user.attributes.document}</td>
+                    <td className="px-6 py-4">{formatDocument(user.attributes.document)}</td>
                     <td className="px-6 py-4 flex gap-2">
                       <button
                         onClick={(e) => {

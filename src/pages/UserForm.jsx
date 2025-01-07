@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { useNavigate } from 'react-router-dom';
 import { createUser } from "../services/UserService";
 import BackButton from '../components/BackButton';
+import  {formatDocument } from '../helpers/formatDocument';
 
 const UserForm = ({ onUserCreated }) => {
   const navigate = useNavigate();
@@ -126,7 +127,7 @@ const UserForm = ({ onUserCreated }) => {
             <input
               type="text"
               name="document"
-              value={formData.document}
+              value={formatDocument(formData.document)}
               onChange={handleChange}
               placeholder="Digite seu CPF"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${

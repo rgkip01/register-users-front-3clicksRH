@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateUser } from '../services/UserService';
 import BackButton from '../components/BackButton';
+import  {formatDocument } from '../helpers/formatDocument';
 
 const UserEditForm = () => {
   const navigate = useNavigate();
@@ -80,7 +81,7 @@ const UserEditForm = () => {
             <input
               type="text"
               name="document"
-              value={userData.document}
+              value={formatDocument(userData.document)}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 border-gray-300"
             />
