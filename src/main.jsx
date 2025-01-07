@@ -16,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { path: 'cadastro-usuario', element: <UserForm /> },
       { path: 'cadastro-endereco', element: <AddressForm /> },
+      { path: 'editar-endereco', element: ''},
       { path: 'usuarios', element: <UserList /> },
       { path: 'usuarios/:id', element: <UserShow /> },
     ],
