@@ -1,5 +1,17 @@
 import api from './Api';
 
+export const searchUsers = async (query) => {
+  try {
+    const response = await api.get(`/users/search`, {
+      params: { q: query },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    throw error;
+  }
+};
+
 export const getUserById = async (userId) => {
   try {
     const response = await api.get(`/users/${userId}`);
@@ -36,6 +48,16 @@ export const createUser = async (userData) => {
 
   const response = await api.post('/users', payload)
   return response.data.data
+}
+
+export const deleteUser = async (userId) => {
+  try {
+    const response = await api.delete(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao remove o usuário:', error);
+    throw error;
+  }
 }
 
 export const getUsers = async () => {
