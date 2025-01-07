@@ -55,7 +55,6 @@ const Usershow = () => {
       try {
         await deleteAddress(userId, addressId);
         setAddresses((prev) => prev.filter((address) => address.id !== addressId));
-        alert('Endereço removido com sucesso!');
       } catch (error) {
         console.error('Erro ao remover endereço:', error);
         alert('Erro ao remover o endereço. Tente novamente.');
@@ -142,7 +141,10 @@ const Usershow = () => {
                 {/* Ícone de lápis para editar endereço */}
                 <button
                   type="button"
-                  onClick={() => navigate(`/editar-endereco?userId=${id}&addressId=${address.id}`)}
+                  onClick={() => {
+                    localStorage.setItem('editingAddress', JSON.stringify(address));
+                    navigate(`/editar-endereco?userId=${id}&addressId=${address.id}`)
+                  }}
                   className="absolute top-2 right-10 text-blue-600 hover:text-blue-800"
                   title="Editar endereço"
                 >

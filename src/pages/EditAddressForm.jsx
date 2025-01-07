@@ -1,75 +1,58 @@
-import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
-import { createAddress } from '../services/AddressService';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { updateAddress } from '../services/AddressService';
 
-const AddressForm = () => {
-  const [formData, setFormData] = useState({
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    complement: '',
-  });
-
-  const navigate = useNavigate();
-  const [errors, setErrors] = useState({});
-  const [searchParams] = useSearchParams();
-  const userId = searchParams.get('user_id'); // Obtém o user_id da query string
+const EditAddressForm = () => {
   
-  // Validações com Yup
-  const validationSchema = Yup.object().shape({
-    street: Yup.string().required('A rua é obrigatória.'),
-    city: Yup.string().required('A cidade é obrigatória.'),
-    state: Yup.string().required('O estado é obrigatório.'),
-    zipCode: Yup.string()
-      .matches(/^\d{5}-?\d{3}$/, 'O CEP deve estar no formato 00000-000.')
-      .required('O CEP é obrigatório.'),
-    country: Yup.string().required('O país é obrigatório.'),
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [address, setAddress] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  const params = new URLSearchParams(location.search);
+  const userId = params.get('userId');
+  const addressId = params.get('addressId');
+
+  useEffect(() => {
+    const storedAddress = localStorage.getItem('editingAddress');
+
+    if (storedAddress) {
+      setAddress(JSON.parse(storedAddress)); 
+    } else {
+      alert('Nenhum endereço encontrado para edição.');
+      navigate(`/usuarios/${userId}`);
+    }
+  }, [userId, addressId, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
-      await validationSchema.validate(formData, { abortEarly: false });
-  
-      if (!userId) {
-        alert('Usuário não identificado. Não é possível cadastrar o endereço.');
-        return;
-      }
-  
-      await createAddress(userId, formData); // Chamando o serviço com userId e formData
+    try {      
+      await updateAddress(userId, addressId, { data: { type: 'addresses', attributes: address } });
+      
+      localStorage.removeItem('editingAddress');
+
+      alert('Endereço atualizado com sucesso!');
       navigate(`/usuarios/${userId}`);
-      alert('Endereço cadastrado com sucesso!');
-    } catch (validationErrors) {
-      if (validationErrors.inner) {
-        const formattedErrors = {};
-        validationErrors.inner.forEach((error) => {
-          formattedErrors[error.path] = error.message;
-        });
-        setErrors(formattedErrors);
-      } else {
-        console.error('Erro ao cadastrar endereço:', validationErrors);
-        alert('Erro ao cadastrar endereço. Tente novamente.');
-      }
+    } catch (error) {
+      console.error('Erro ao atualizar endereço:', error);
+      alert('Erro ao salvar as alterações. Tente novamente.');
     }
   };
-  
+
+  if (!address) {
+    return <p>Carregando...</p>;
+  }
+
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl">
         <h2 className="text-purple-700 text-3xl font-bold mb-6 text-center">
-          Cadastro de Endereço
+          Editar de Endereço
         </h2>
         <form
           onSubmit={handleSubmit}
@@ -83,9 +66,8 @@ const AddressForm = () => {
             <input
               type="text"
               name="street"
-              value={formData.street}
+              value={address.street}
               onChange={handleChange}
-              placeholder="Digite a rua"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
                 errors.street ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -103,9 +85,8 @@ const AddressForm = () => {
             <input
               type="text"
               name="city"
-              value={formData.city}
+              value={address.city}
               onChange={handleChange}
-              placeholder="Digite a cidade"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
                 errors.city ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -123,9 +104,8 @@ const AddressForm = () => {
             <input
               type="text"
               name="state"
-              value={formData.state}
+              value={address.state}
               onChange={handleChange}
-              placeholder="Digite o estado"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
                 errors.state ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -142,16 +122,15 @@ const AddressForm = () => {
             </label>
             <input
               type="text"
-              name="zipCode"
-              value={formData.zipCode}
+              name="zip_code"
+              value={address.zip_code}
               onChange={handleChange}
-              placeholder="Digite o CEP"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
-                errors.zipCode ? 'border-red-500' : 'border-gray-300'
+                errors.zip_code ? 'border-red-500' : 'border-gray-300'
               }`}
             />
-            {errors.zipCode && (
-              <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>
+            {errors.zip_code && (
+              <p className="text-red-500 text-sm mt-1">{errors.zip_code}</p>
             )}
           </div>
 
@@ -163,9 +142,8 @@ const AddressForm = () => {
             <input
               type="text"
               name="country"
-              value={formData.country}
+              value={address.country}
               onChange={handleChange}
-              placeholder="Digite o país"
               className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 ${
                 errors.country ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -183,9 +161,8 @@ const AddressForm = () => {
             <input
               type="text"
               name="complement"
-              value={formData.complement}
+              value={address.complement}
               onChange={handleChange}
-              placeholder="Digite o complemento"
               className="w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-600 border-gray-300"
             />
           </div>
@@ -196,7 +173,7 @@ const AddressForm = () => {
               type="submit"
               className="bg-purple-700 text-white px-6 py-2 rounded-md shadow-md hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
             >
-              Cadastrar Endereço
+              Salvar Alteração
             </button>
           </div>
         </form>
@@ -205,4 +182,4 @@ const AddressForm = () => {
   );
 };
 
-export default AddressForm;
+export default EditAddressForm;
