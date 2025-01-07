@@ -35,9 +35,11 @@ const UserList = () => {
     navigate(`/cadastro-endereco?user_id=${userId}`);
   };
 
-  const handleEditUser = (userId) => {
-    navigate(`/usuarios/${userId}/editar`);
+  const handleEditUser = (user) => {
+    localStorage.setItem('editUserData', JSON.stringify(user.attributes));
+    navigate(`/editar-usuario?id=${user.id}`);
   };
+  
 
   const handleDeleteUser = async (userId) => {
     if (window.confirm('Tem certeza que deseja excluir este usuário?')) {
@@ -106,7 +108,7 @@ const UserList = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleEditUser(user.id);
+                          handleEditUser(user);
                         }}
                         className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600 focus:outline-none flex items-center gap-1"
                       >

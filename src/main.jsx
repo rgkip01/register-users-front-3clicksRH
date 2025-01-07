@@ -5,6 +5,7 @@ import App from './App';
 import UserForm from './pages/UserForm';
 import UserList from './pages/UserList';
 import UserShow from './pages/UserShow';
+import UserEditForm from './pages/UserEditForm';
 import AddressForm from './pages/AddressForm';
 import EditAddressForm from './pages/EditAddressForm';
 import './index.css';
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: 'cadastro-usuario', element: <UserForm /> },
       { path: 'cadastro-endereco', element: <AddressForm /> },
       { path: 'editar-endereco', element: <EditAddressForm />},
+      { path: 'editar-usuario', element: <UserEditForm />},
       { path: 'usuarios', element: <UserList /> },
       { path: 'usuarios/:id', element: <UserShow /> },
     ],
